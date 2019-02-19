@@ -18,8 +18,5 @@ int main(){
     qsort(task_set, 3,  sizeof(Process), cmp);
     calculateResponseTimes(task_set);
     displayTaskSet(task_set);
-    /*printf("%d\n", task_set[0].r_time);
-    printf("%d\n", task_set[1].r_time);
-    printf("%d\n", task_set[2].r_time);*/
     return 0;
 }

@@ -32,20 +32,20 @@ void generateProcesses(FILE * infile, Process *task_set){
 }
 void calculateResponseTimes(Process * task_set){
     int arr_length = sizeof(task_set)-1;
-    for(int i = arr_length -1; i>=0; i--){
+    for(int index = 0; index <= arr_length-1; index++){   
         int prev = -1; float acc = 0; int curr = 0;
-        if(i == arr_length-1){
-            task_set[i].r_time = task_set[i].c_time;
+        if(index == arr_length-1){
+            task_set[index].r_time = task_set[index].c_time;
         }
         else{
-            while(curr < task_set[i].period && curr != prev){
+            while(curr != prev){        //curr < task_set[index].period && 
                 prev = curr; acc = curr; curr = 0;
-                for(int j = i + 1; j < arr_length; j++){
-                    curr += ceil(acc/task_set[j].period) * task_set[j].c_time;
+                for(int inner_idx = index + 1; inner_idx < arr_length; inner_idx++){   
+                    curr += ceil(acc/task_set[inner_idx].period) * task_set[inner_idx].c_time;
                 }
-                curr += task_set[i].c_time;
+                curr += task_set[index].c_time;
             }
-            task_set[i].r_time = curr;
+            task_set[index].r_time = curr;
             curr = 0; prev = -1;
         }
     }
@@ -65,7 +65,7 @@ void displayTaskSet(Process * task_set){
     int arr_length = sizeof(task_set)-1;
     printf("id\tT\tC\tP\tR\n");
     printf("..................................\n");
-    for(int i = 0; i<=arr_length -1; i++){
+    for(int i = 0; i<=arr_length-1; i++){
         printf("%d\t%d\t%d\t%d\t%d\n", i+1, task_set[i].period, task_set[i].c_time, task_set[i].priority, task_set[i].r_time);
     }
     if(isSchedulable(task_set)){
