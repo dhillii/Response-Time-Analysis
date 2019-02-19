@@ -2,7 +2,7 @@
 #include<stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <limits.h>
 
 void generateProcesses(FILE * infile, Process *task_set){
     char buf [256];
@@ -31,5 +31,53 @@ void generateProcesses(FILE * infile, Process *task_set){
 
 }
 void calculateResponseTimes(Process * task_set){
+    int arr_length = sizeof(task_set)-1;
+    for(int i = arr_length -1; i>=0; i--){
+        int prev = INT_MIN;
+        float acc = 0;
+        int curr = 0;
+        if(i == arr_length-1){
+            task_set[i].r_time = task_set[i].c_time;
+            continue;
+        }
+        else{
+            while(curr != prev && curr < task_set[i].period){
+                prev = curr;
+                acc = curr;
+                curr = 0;
+                for(int j = i + 1; j < arr_length; j++){
+                    curr += ceil(acc/task_set[j].period) * task_set[j].c_time;
+                }
+                curr += task_set[i].c_time;
+            }
+            task_set[i].r_time = curr;
+            curr = 0;
+            prev = INT_MIN;
+        }
+    }
+}
 
+bool isSchedulable(Process * task_set){
+    int arr_length = sizeof(task_set)-1;
+    for(int i = arr_length -1; i>=0; i--){
+        if(task_set[i].r_time > task_set[i].period){
+            return false;
+        }
+    }
+    return true;
+}
+
+void displayTaskSet(Process * task_set){
+    int arr_length = sizeof(task_set)-1;
+    printf("id\tT\tC\tP\tR\n");
+    printf("..................................\n");
+    for(int i = 0; i<=arr_length -1; i++){
+        printf("%d\t%d\t%d\t%d\t%d\n", i+1, task_set[i].period, task_set[i].c_time, task_set[i].priority, task_set[i].r_time);
+    }
+    if(isSchedulable(task_set)){
+        printf("\nThis set of tasks IS Schedulableby by a fixed priority scheduler!\n");
+    }
+    else{
+        printf("\nThis set of tasks is NOT Schedulable by a fixed priority scheduler!!\n");
+    }
 }
